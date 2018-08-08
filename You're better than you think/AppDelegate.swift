@@ -10,16 +10,52 @@ import Cocoa
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-
+    var timer: Timer? = nil
 
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Insert code here to initialize your application
+        timer = Timer.scheduledTimer(timeInterval: 1200, target: self, selector: #selector(self.sayHello), userInfo: nil, repeats: true)
+        
+    }
+    
+    @objc func sayHello()
+    {
+        self.showNotification()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }
+    
+    func applicationWillResignActive(_ notification: Notification) {
+    }
+    
+    func showNotification() -> Void {
+        let notification = NSUserNotification()
+        let fetchRequest = NSFetchRequest<Statement>()
+        let appDelegate = NSApp.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        // Create Entity Description
+        let entityDescription = NSEntityDescription.entity(forEntityName: "Statement", in: context)
+        
+        // Configure Fetch Request
+        fetchRequest.entity = entityDescription
+        
+        
+        do {
+            let statemenst = try context.fetch(fetchRequest )
+            notification.title = "You're better than you think!"
+            notification.informativeText = statemenst.randomItem()?.text
+            notification.soundName = NSUserNotificationDefaultSoundName
+//            notification.contentImage = NSImage.init(imageLiteralResourceName: "AppIcon")
+            NSUserNotificationCenter.default.deliver(notification)
+        } catch {
+            let fetchError = error as NSError
+            print(fetchError)
+        }
+        
+    }
+
 
     // MARK: - Core Data stack
 
@@ -120,3 +156,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 }
 
+extension Array {
+    func randomItem() -> Element? {
+        if isEmpty { return nil }
+        let index = Int(arc4random_uniform(UInt32(self.count)))
+        return self[index]
+    }
+}
