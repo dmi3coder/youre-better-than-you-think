@@ -30,6 +30,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillResignActive(_ notification: Notification) {
     }
     
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        
+        if(sender.mainWindow?.contentViewController == nil) {
+            var myWindow: NSWindow? = nil
+            let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Main"),bundle: nil)
+            let controller: ViewController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "main")) as! ViewController
+            myWindow = NSWindow(contentViewController: controller)
+            myWindow?.makeKeyAndOrderFront(self)
+            let vc = NSWindowController(window: myWindow)
+            vc.showWindow(self)
+        }
+        return true
+    }
+    
+    
+    
     func showNotification() -> Void {
         let notification = NSUserNotification()
         let fetchRequest = NSFetchRequest<Statement>()
