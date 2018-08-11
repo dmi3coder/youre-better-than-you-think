@@ -68,6 +68,9 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
     
     
     @IBAction func cheerButton(_ sender: NSButton) {
+        if(cheerField.stringValue.isEmpty){
+            return
+        }
         let appDelegate = NSApp.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "Statement", in: context)
@@ -116,6 +119,24 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
             return cell
         }
         return nil
+    }
+    
+    
+    @IBAction func cellSelected(_ sender: NSTableView) {
+        
+    }
+    
+    @IBAction func removeElement(_ sender: Any) {
+        deleteProfile(text: statemenst![tableView.clickedRow])
+    }
+    
+    
+    func deleteProfile(text: Statement) {
+        
+        let appDelegate = NSApp.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        context.delete(text)
+        reloadData()
     }
 
 
